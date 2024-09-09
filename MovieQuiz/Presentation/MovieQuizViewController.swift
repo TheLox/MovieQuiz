@@ -78,15 +78,30 @@ final class MovieQuizViewController: UIViewController {
         }
         
         imageView.layer.masksToBounds = true
-        imageView.layer.borderWidth = 8
-        imageView.layer.cornerRadius = 6
-        imageView.layer.borderColor = isCorrect ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
-        
+        imageView.layer.cornerRadius = 15
+
+        // Создаем CAShapeLayer для рамки
+        let borderLayer = CAShapeLayer()
+        borderLayer.frame = imageView.bounds
+
+        // Создаем UIBezierPath с закругленными углами
+        let cornerRadius: CGFloat = 20 
+        let roundedPath = UIBezierPath(roundedRect: imageView.bounds, cornerRadius: cornerRadius)
+        borderLayer.path = roundedPath.cgPath
+
+        borderLayer.lineWidth = 15
+        borderLayer.strokeColor = isCorrect ? UIColor.ypGreenIOS1.cgColor : UIColor.ypRedIOS.cgColor
+        borderLayer.fillColor = UIColor.clear.cgColor
+
+        // Добавляем слой рамки к изображению
+        imageView.layer.addSublayer(borderLayer)
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            self.imageView.layer.borderColor = UIColor.clear.cgColor
+            borderLayer.removeFromSuperlayer()
             self.showNextQuestionOrResults()
         }
     }
+
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questions.count - 1 {
